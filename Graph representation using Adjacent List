@@ -1,0 +1,80 @@
+
+//Graph representation
+#include <stdio.h>
+#include <stdlib.h>
+#define maxnode 4
+
+struct node
+{
+    int data ;            // vertexNum
+    struct node *link;    // link
+};
+
+struct list
+{
+  struct node *head;  
+};
+
+struct list *adjlist[maxnode] = {0}; 
+
+void addnode(int s,int d)
+{
+    struct node *src, *des ,*temp;
+    
+    if(adjlist[s] -> head == NULL)
+    {
+        src = (struct node *)malloc(sizeof(struct node));
+        src -> data = s;
+        src -> link = NULL;
+        adjlist[s] -> head = src;
+    }
+    
+    des = (struct node *)malloc(sizeof(struct node));
+    des -> data = d;
+    des -> link = NULL;
+    temp = adjlist[s] -> head;
+    
+    while(temp -> link != NULL)
+    {
+        temp = temp -> link ;
+    }
+    
+    temp -> link = des ;
+    
+}
+
+void printGraph()
+{
+    // printf("Adjacency list is:\n ");
+     
+    for(int i=0; i<maxnode ; i++)
+    {
+        struct node *t = adjlist[i]-> head;
+     
+        while(t)
+        {
+            printf("%d ",t -> data);
+            t = t->link;
+        }
+        printf("\n");
+    }
+}
+
+int main()
+{
+    
+    for(int i=0;i<maxnode;i++)
+    {
+        adjlist[i] = (struct list *)malloc(sizeof(struct list));
+        adjlist[i] -> head = NULL; 
+        
+    }
+    
+    addnode(0,1);
+    addnode(0,3);
+    addnode(1,2);
+    addnode(0,2);
+   printGraph();
+
+    return 0;
+}
