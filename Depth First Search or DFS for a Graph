@@ -1,0 +1,68 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph
+{
+    int v ;           // no of vertices 
+    list<int> *adj;  // for adjacency 
+    
+    public:
+    Graph(int vertices);
+    void addEdge(int v,int w);
+    void dfs(int s);
+    void dfsutil(int v,bool vis[]);
+};
+
+Graph :: Graph(int vertices)
+{
+    v = vertices;
+    adj = new list<int>[v];
+}
+
+void Graph :: addEdge(int v,int w)
+{
+    adj[v].push_back(w);
+}
+
+void Graph:: dfsutil(int v,bool vis[])
+{
+    vis[v] = true;
+    
+    cout << v << " ";
+    
+    list<int>::iterator it;
+    
+    for(it = adj[v].begin(); it!=adj[v].end();it++)
+    {
+        if(!vis[*it])
+        {
+            dfsutil(*it,vis);
+        }
+    }
+}
+
+void Graph :: dfs(int s)
+{
+  bool *vis = new bool[v];
+  for(int i=0;i<v;i++)
+  vis[i] = false;
+  
+ dfsutil(s,vis);
+  
+}
+
+int main()
+{
+    Graph g(4);
+    g.addEdge(0, 1); 
+    g.addEdge(0, 2); 
+    g.addEdge(1, 2); 
+    g.addEdge(2, 0); 
+    g.addEdge(2, 3); 
+    g.addEdge(3, 3); 
+
+    g.dfs(2);
+
+    return 0;
+}
