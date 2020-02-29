@@ -1,0 +1,119 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Graph
+{
+    int V;
+    list<int> *adj;
+    
+    public:
+    Graph(int v);
+    
+    void addEdge(int u,int w);
+    
+    void printKCores(int k);
+    
+    int DFSUtil(int s,vector<bool> &vis,vector<int> &vdegree,int k);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+}
+
+void Graph :: addEdge(int u,int v)
+{
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+
+int Graph :: DFSUtil(int v,vector<bool> &vis,vector<int> &vdegree,int k)
+{
+    vis[v] = true;
+    
+    list<int>::iterator it;
+    for(it = adj[v].begin();it!=adj[v].end();it++)
+    {
+        //degree of v < k , then reduce its adjacent
+        if(vdegree[v] < k)
+         vdegree[*it]--;
+         
+         if(!vis[*it])
+         {
+          if(DFSUtil(*it,vis,vdegree,k))
+          vdegree[v]--;
+         }
+    }
+    
+    return (vdegree[v] < k);
+}
+
+void Graph :: printKCores(int k)
+{
+    vector<bool> vis(V,false);
+    vector<int> vdegree(V);
+    
+    int startindex , mindegree = INT_MAX;
+    
+    for(int i=0;i<V;i++)
+    {
+        vdegree[i] = adj[i].size();
+        
+        if(vdegree[i] < mindegree)
+        {
+            mindegree = vdegree[i];
+            startindex = i;
+        }
+    }
+    
+    DFSUtil(startindex,vis,vdegree,k);
+    
+    //to update degree
+    for(int i=0;i<V;i++)
+    if(vis[i] == false)
+    DFSUtil(i,vis,vdegree,k);
+    
+    //printKCores
+    for(int i=0;i<V;i++)
+    {
+        if(vdegree[i] >= k)
+        {
+            printf("[%d] ",i);
+            list<int>::iterator it;
+            for(it = adj[i].begin() ; it != adj[i].end() ; it++)
+            {
+                if(vdegree[*it] >= k)
+                cout << " -> " << *it;
+            }
+            cout<<"\n";
+        }
+    }
+}
+
+int main()
+{
+int k = 3; 
+    Graph g1(9); 
+    g1.addEdge(0, 1); 
+    g1.addEdge(0, 2); 
+    g1.addEdge(1, 2); 
+    g1.addEdge(1, 5); 
+    g1.addEdge(2, 3); 
+    g1.addEdge(2, 4); 
+    g1.addEdge(2, 5); 
+    g1.addEdge(2, 6); 
+    g1.addEdge(3, 4); 
+    g1.addEdge(3, 6); 
+    g1.addEdge(3, 7); 
+    g1.addEdge(4, 6); 
+    g1.addEdge(4, 7); 
+    g1.addEdge(5, 6); 
+    g1.addEdge(5, 8); 
+    g1.addEdge(6, 7); 
+    g1.addEdge(6, 8); 
+    g1.printKCores(k); 
+    
+    return 0;
+}
