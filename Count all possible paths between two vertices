@@ -1,0 +1,67 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph
+{
+  int V;
+  list<int> *adj;
+  
+  public :
+  Graph(int v);
+  void addEdge(int u,int v);
+  int countPaths(int s,int d);
+  void cntPathutil(int s,int d,vector<bool> &vis,int &count);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+}
+
+void Graph :: addEdge(int u,int v)
+{
+    adj[u].push_back(v);
+   // adj[v].push_back(u);
+}
+
+void Graph::cntPathutil(int s,int d,vector<bool> &vis,int &count)
+{
+    vis[s] = true ;
+    
+    if(s == d) count++;
+    else
+    {
+        list<int>::iterator it;
+        for(it = adj[s].begin() ; it!=adj[s].end();it++)
+        if(!vis[*it])
+        cntPathutil(*it,d,vis,count);
+    }
+    
+    vis[s] =false;
+}
+
+int Graph :: countPaths(int s,int d)
+{
+    vector<bool> vis(V,false);
+    int count = 0;
+    
+    cntPathutil(s,d,vis,count);
+    return count;
+}
+
+int main()
+{
+    Graph g(4); 
+    g.addEdge(0, 1); 
+    g.addEdge(0, 2); 
+    g.addEdge(0, 3); 
+    g.addEdge(2, 0); 
+    g.addEdge(2, 1); 
+    g.addEdge(1, 3); 
+  
+    int s = 2, d = 3; 
+    cout << g.countPaths(s, d); 
+    return 0;
+}
