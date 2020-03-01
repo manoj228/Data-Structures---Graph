@@ -1,0 +1,73 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph
+{
+  int V;
+  list<int> *adj;
+  
+  public:
+  Graph(int v);
+  void addEdge(int u,int v);
+  int IDDFS(int s,int t,int md);
+  int dls(int s,int d,int md);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[v];
+}
+
+void Graph :: addEdge(int u,int v)
+{
+    adj[u].push_back(v);
+}
+
+int Graph :: dls(int s,int t,int md)
+{
+    if(md < 0)
+    return false;
+    
+    if(s==t)
+    return true;
+    
+    for(auto it=adj[s].begin() ; it != adj[s].end() ; it++)
+    {
+        if(dls(*it,t,md) == true)
+        return true;
+    }
+    
+    return false;
+}
+
+int Graph :: IDDFS(int s,int t,int md)
+{
+    for(int i=0;i<=md;i++)
+    {
+        if(dls(s,t,md) == true)
+        return true;
+    }
+    
+    return false;
+}
+
+int main()
+{
+    Graph g(7); 
+    g.addEdge(0, 1); 
+    g.addEdge(0, 2); 
+    g.addEdge(1, 3); 
+    g.addEdge(1, 4); 
+    g.addEdge(2, 5); 
+    g.addEdge(2, 6); 
+  
+    int s = 0, t = 6 , md = 3;
+    if(g.IDDFS(s,t,md) == true)
+    cout << "Reachable ";
+    else 
+    cout << "Not Reachable";
+    
+    return 0;
+}
