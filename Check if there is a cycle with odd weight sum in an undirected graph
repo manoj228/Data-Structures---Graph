@@ -1,0 +1,102 @@
+//Check for odd sum weight is present in a graph or not
+#include <bits/stdc++.h>
+using namespace std;
+
+int twoColorUtil(vector<int> G[],int src,int N,int colorArr[])
+{
+    queue<int> q;
+    /* where 1 represents first color 
+             2 represents second color
+    */
+    colorArr[src] = 1;
+    
+    q.push(src);
+    
+    while(!q.empty())
+    {
+        int u = q.front();
+        q.pop();
+        
+        for(int v=0;v<G[u].size();v++)
+        {
+            //if u to v edge exits and not colored, then update alternate color
+            if(colorArr[G[u][v]] == -1)
+            {
+                colorArr[G[u][v]] = 1 - colorArr[u];
+                q.push(G[u][v]);
+            }
+            
+            //if colorArr of u and v has same color , then odd cycle has occur and return false
+            else if(colorArr[G[u][v]] == colorArr[u])
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int twoColor(vector<int> G[],int N)
+{
+    int colorArr[N];
+    //initially all nodes have value '-1' , means not colored
+    for(int i=0;i<N;i++)
+    colorArr[i]= -1;
+    
+    for(int i=0;i<N;i++)
+    {
+        if(colorArr[i] == -1)
+        if(!twoColorUtil(G,i,N,colorArr))
+        return false;
+    }
+    
+    return true;
+}
+
+int isOddsum(int info[][3],int n,int m)
+{
+    vector<int> G[2*n];
+    int pseudo = n+1;
+    int pseudo_count = 0;
+    
+    for(int i=0;i<m;i++)
+    {
+        // if odd no of weights occured
+        if(info[i][2] % 2 )
+        {
+            int u = info[i][0];
+            int v = info[i][1];
+            G[u].push_back(v);
+            G[v].push_back(u);
+        }
+        //if even no of weights occured
+        else
+        {
+            int u = info[i][0] , v = info[i][1];
+            G[u].push_back(pseudo);
+            G[pseudo].push_back(u);
+            G[v].push_back(pseudo);
+            G[pseudo].push_back(v);
+            
+            pseudo++ , pseudo_count++ ;
+        }
+    }
+    
+    //total no. of nodes = actual no. of nodes + pseudo_count;
+    return twoColor(G,n+pseudo_count);
+}
+
+int main()
+{
+     int n = 4, m = 3; 
+    int info[4][3] = {{1, 2, 12}, 
+                     {2, 3, 1}, 
+                     {4, 3, 1}, 
+                     {4, 1, 20}}; 
+                     
+   if(isOddsum(info,n,m))
+   printf("NO\n");
+   else
+   printf("YES\n");
+
+    return 0;
+}
