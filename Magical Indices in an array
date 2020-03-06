@@ -1,0 +1,51 @@
+//Time complexity : O(n)
+#include <bits/stdc++.h>
+using namespace std;
+
+int solve(int a[],int n)
+{
+    int i,j,cnt = 0;
+    int parent[n+1] , vis[n+1];
+    
+    memset(parent,-1,sizeof(parent));
+    memset(vis,0,sizeof(vis));
+    
+    for(i=0;i<n;i++)
+    {
+        j = i;
+        //check current value is visited or not
+        if(parent[j] == -1)
+        {
+            //traverse the graph until the visited node not found
+           while(parent[j] == -1)
+           {
+               parent[j] = i;
+               j = (j + 1 + a[j]) % n;
+           }
+           
+           //check if cycle is present or not
+           if(parent[j] == i)
+           {
+              
+              //count no of nodes in cycle
+              while(!vis[j])
+              {
+                  vis[j] = 1;
+                  j = (j + 1 + a[j]) % n;
+                  cnt++;
+              }
+           }
+        }
+    }
+    
+    return cnt;
+}
+
+int main()
+{
+    int A[] = { 0, 0, 0, 2 }; 
+    int n = sizeof(A) / sizeof(A[0]); 
+    cout << solve(A, n); 
+
+    return 0;
+}
