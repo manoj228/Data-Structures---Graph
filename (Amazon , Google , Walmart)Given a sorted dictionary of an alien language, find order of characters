@@ -1,0 +1,90 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph
+{
+  int V;
+  list<int> *adj;
+  
+  public :
+  Graph(int v);
+  void addEdge(int u,int v);
+  void topologicalSort();
+  void topologicalSortUtil(int v,bool vis[], stack<int> &s);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj= new list<int>[V];
+}
+
+void Graph :: addEdge(int u,int v)
+{
+    //directed Graph
+    adj[u].push_back(v);
+}
+
+void Graph :: topologicalSortUtil(int v,bool vis[],stack<int> &s)
+{
+    vis[v] = true;
+    
+    list<int> :: iterator it;
+    for(it = adj[v].begin() ; it != adj[v].end() ; it++)
+    if(!vis[*it])
+    topologicalSortUtil(*it,vis,s);
+    
+    s.push(v);
+}
+
+void Graph :: topologicalSort()
+{
+    stack<int> s;
+    bool *vis = new bool(V);
+    
+    for(int i=0;i<V;i++)
+    {
+        vis[i] = false;
+    }
+    
+    for(int i=0;i<V;i++)
+    if(!vis[i])
+    topologicalSortUtil(i,vis,s);
+    
+    while(!s.empty())
+    {
+        cout << (char) (s.top() + 'a')<< " ";
+        s.pop();
+    }
+}
+//works only for valid input
+void print(string words[],int n,int alpha)
+{
+    Graph g(alpha);
+    
+    for(int i=0;i<n-1;i++)
+    {
+        //to compare pair of words
+        string word1 = words[i] , word2 = words[i+1];
+        
+        for(int j=0; j < min(word1.length() , word2.length()) ; j++)
+        {
+            //find mismatching character 
+            if(word1[j] != word2[j])
+            {
+                g.addEdge(word1[j] - 'a' , word2[j] - 'a');
+                break;
+            }
+        }
+    }
+    
+    g.topologicalSort();
+}
+
+int main()
+{
+    string words[] = { "caa" , "aaa" , "aab"};
+    print(words,3,3);
+    return 0;
+}
