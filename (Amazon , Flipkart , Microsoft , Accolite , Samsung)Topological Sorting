@@ -1,0 +1,72 @@
+// Time Complexity : O(V+E)
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph{
+    int V;
+    list<int> *adj;
+    
+    public :
+    Graph(int v);
+    void addEdge(int u,int v);
+    int topologicalSort();
+    int topologicalSortUtil(int i,bool vis[],stack<int> &s);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+}
+
+void Graph::addEdge(int u,int v)
+{
+    adj[u].push_back(v);
+}
+
+int Graph :: topologicalSortUtil(int v,bool vis[],stack<int> &s)
+{
+    vis[v] = true;
+    
+    list<int>::iterator it;
+    for(it = adj[v].begin() ; it!=adj[v].end() ; it++)
+    if(!vis[*it])
+    topologicalSortUtil(*it,vis,s);
+    
+    s.push(v);
+}
+
+int Graph :: topologicalSort()
+{
+    bool *vis = new bool[V];
+    
+    for(int i=0;i<V;i++)
+    vis[i] = false;
+    
+    stack<int> s;
+    
+    for(int i=0;i<V;i++)
+    if(!vis[i])
+    topologicalSortUtil(i,vis,s);
+    
+    while(!s.empty())
+    {
+        cout << s.top() << " ";
+        s.pop();
+    }
+}
+
+int main()
+{
+     Graph g(6); 
+    g.addEdge(5, 2); 
+    g.addEdge(5, 0); 
+    g.addEdge(4, 0); 
+    g.addEdge(4, 1); 
+    g.addEdge(2, 3); 
+    g.addEdge(3, 1); 
+    
+    g.topologicalSort(); 
+
+    return 0;
+}
