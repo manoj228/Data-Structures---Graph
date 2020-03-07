@@ -1,0 +1,140 @@
+//Kruskal Algorithm for Minimum Spanning Tree
+//Time Complexity : O(ElogV)
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Edge
+{
+    int src , dest , weight ; 
+};
+
+struct Graph
+{
+  int V , E;
+  struct Edge *edge;
+};
+
+struct Graph *createGraph(int v,int e)
+{
+  struct Graph *g = (struct Graph *)malloc(sizeof(struct Graph));
+  g -> V = v;
+  g -> E = e;
+  g -> edge = (struct Edge *)malloc(sizeof(struct Edge) * g -> E);
+  
+  return g;
+};
+
+//structure for use union - find 
+struct subset
+{
+  int parent , rank;  
+};
+
+int find(struct subset s[] , int i)
+{
+    if(s[i].parent != i)
+    s[i].parent = find(s , s[i].parent);
+    
+    return s[i].parent;
+}
+
+void Union(struct subset subsets[], int x, int y) 
+{ 
+    int xroot = find(subsets, x); 
+    int yroot = find(subsets, y); 
+  
+    if (subsets[xroot].rank < subsets[yroot].rank) 
+        subsets[xroot].parent = yroot; 
+    else if (subsets[xroot].rank > subsets[yroot].rank) 
+        subsets[yroot].parent = xroot; 
+    else
+    { 
+        subsets[yroot].parent = xroot; 
+        subsets[xroot].rank++; 
+    } 
+}
+
+
+int myCmp(const void *a, const void *b)
+{
+    struct Edge *a1 = (struct Edge*)a;
+    struct Edge *b1 = (struct Edge*)b;
+    
+    return a1->weight > b1->weight;
+}
+
+void KruskalMST(struct Graph *g)
+{
+    int V = g -> V;
+    struct Edge res[V] ;
+    int e = 0 ; // index variable for res[]
+    int i = 0 ; // index variable for sorted edge 
+    
+    // 1) sort all edges 
+    qsort(g->edge , g->E , sizeof(g->edge[0]) , myCmp);
+    
+    struct subset *s = (struct subset *)malloc(sizeof(struct subset) * V);
+    
+    for(int i=0;i<V;i++)
+    {
+        s[i].parent = i;
+        s[i].rank = 0;
+    }
+    
+    //no of edges to be taken 
+    while(e < V-1 && i < g->E)
+    {
+        // 2) pick small edges
+        struct Edge ne = g -> edge[i++];
+        
+        int x = find(s , ne.src);
+        int y = find(s , ne.dest);
+        
+        //forms a cycle 
+        if(x != y)
+        {
+            res[e++] = ne ;
+            Union(s,x,y);
+        }
+    }
+    
+    for(int i=0;i<e;i++)
+    printf("%d - %d %d\n",res[i].src , res[i].dest , res[i].weight);
+    
+} 
+
+int main()
+{
+    int V = 4; 
+    int E = 5; 
+    struct Graph* graph = createGraph(V, E); 
+    
+     // add edge 0-1 
+    graph->edge[0].src = 0; 
+    graph->edge[0].dest = 1; 
+    graph->edge[0].weight = 10; 
+  
+    // add edge 0-2 
+    graph->edge[1].src = 0; 
+    graph->edge[1].dest = 2; 
+    graph->edge[1].weight = 6; 
+  
+    // add edge 0-3 
+    graph->edge[2].src = 0; 
+    graph->edge[2].dest = 3; 
+    graph->edge[2].weight = 5; 
+  
+    // add edge 1-3 
+    graph->edge[3].src = 1; 
+    graph->edge[3].dest = 3; 
+    graph->edge[3].weight = 15; 
+  
+    // add edge 2-3 
+    graph->edge[4].src = 2; 
+    graph->edge[4].dest = 3; 
+    graph->edge[4].weight = 4; 
+  
+    KruskalMST(graph); 
+
+    return 0;
+}
