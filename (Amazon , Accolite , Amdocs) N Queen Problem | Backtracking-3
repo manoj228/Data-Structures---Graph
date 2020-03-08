@@ -1,0 +1,67 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+#define N 4 
+
+// left diagonal checking using row - col + N - 1
+int ld[30] = {0};
+
+//right diagonal checking using row + col
+int rd[30] = {0};
+
+//array to check whether the queen can be placed or not 
+int cl[30] = {0};
+
+void printSolution(int board[][N])
+{
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<N;j++)
+        printf("%d ",board[i][j]);
+        printf("\n");
+    }
+}
+
+int solveNQUtil(int board[][N],int col)
+{
+    //base case 
+    if(col >= N)
+    return 1;
+    
+    for(int i=0;i<N;i++)
+    {
+        if((ld[i - col + N - 1] != 1 && rd[i+col] != 1) && cl[i] != 1)
+        {
+        	board[i][col] = 1;
+            ld[i - col + N - 1] = rd[i+col] = cl[i] = 1;
+            
+            if(solveNQUtil(board,col+1))
+            return 1;
+            
+            //backtrack if its not possible to leads to its solution 
+            board[i][col] = 0;
+            ld[i - col + N - 1] = rd[i+col] = cl[i] = 0;
+            
+        }
+    }
+    
+    return 0;
+}
+
+
+int main()
+{
+    int board[N][N] = { { 0, 0, 0, 0 }, 
+                        { 0, 0, 0, 0 }, 
+                        { 0, 0, 0, 0 }, 
+                        { 0, 0, 0, 0 } }; 
+  
+   if (!solveNQUtil(board, 0)) { 
+        printf("Solution does not exist"); 
+        return 0; 
+    }
+  
+    printSolution(board);
+
+    return 0;
+}
