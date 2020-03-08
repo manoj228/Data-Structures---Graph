@@ -48,7 +48,7 @@ int solve(int sol[][N],int x,int y,int maze[][N])
     return 0;
 }
 
-void solveMaze()
+void solveMaze(int maze[][N])
 {
      int sol[N][N] = { { 0, 0, 0, 0 }, 
                       { 0, 0, 0, 0 }, 
