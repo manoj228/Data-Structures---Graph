@@ -1,0 +1,112 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef pair<int,int> pi;
+
+class Graph{
+    int V;
+    list<int> *adj;
+    vector<pair<int,pi>> edges;
+    
+    public:
+    Graph(int v);
+    void DFS(int v,bool vis[]);
+    void addEdge(int u,int v,int w);
+    void reverseDeleteMST();
+    int isConnected();
+};
+
+Graph:: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+}
+
+void Graph ::addEdge(int u,int v,int w)
+{
+    //undirected graph
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+    edges.push_back({w, {u,v}});
+}
+
+void Graph :: DFS(int v,bool vis[])
+{
+    vis[v] = true;
+    
+    list<int>::iterator it;
+    for(it = adj[v].begin() ; it!= adj[v].end() ; it++)
+    {
+        if(!vis[*it])
+        DFS(*it,vis);
+    }
+}
+
+int Graph :: isConnected()
+{
+    bool vis[V];
+    memset(vis,false,sizeof(vis));
+    
+    DFS(0,vis);
+    
+    for(int i=0;i<V;i++)
+    if(!vis[i])
+    return false;
+    
+    return true;
+}
+
+void Graph :: reverseDeleteMST()
+{
+    sort(edges.begin() , edges.end());
+    
+    int totWeight = 0;
+    
+    for(int i=edges.size() - 1 ; i>= 0; i--)
+    {
+        int u = edges[i].second.first;
+        int v = edges[i].second.second;
+        
+        //remove edges from undirected graph
+        adj[u].remove(v);
+        adj[v].remove(u);
+        
+        //if it makes Graph as disconnected 
+        if( ! isConnected())
+        {
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+            
+            printf("(%d , %d)\n",u,v);
+            totWeight += edges[i].first;
+        }
+    }
+    printf("Total Weight is %d",totWeight);
+}
+
+int main()
+{
+    int V = 9; 
+    Graph g(V); 
+  
+    //  making above shown graph 
+    g.addEdge(0, 1, 4); 
+    g.addEdge(0, 7, 8); 
+    g.addEdge(1, 2, 8); 
+    g.addEdge(1, 7, 11); 
+    g.addEdge(2, 3, 7); 
+    g.addEdge(2, 8, 2); 
+    g.addEdge(2, 5, 4); 
+    g.addEdge(3, 4, 9); 
+    g.addEdge(3, 5, 14); 
+    g.addEdge(4, 5, 10); 
+    g.addEdge(5, 6, 2); 
+    g.addEdge(6, 7, 1); 
+    g.addEdge(6, 8, 6); 
+    g.addEdge(7, 8, 7); 
+  
+    g.reverseDeleteMST(); 
+
+    return 0;
+}
