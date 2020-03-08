@@ -1,0 +1,78 @@
+//Backtracking
+
+#include <bits/stdc++.h>
+using namespace std;
+#define N 4 
+
+void printSolution(int sol[N][N])
+{
+    for(int i=0;i<N;i++)
+    {
+        for(int j=0;j<N;j++)
+        printf("%d ",sol[i][j]);
+        printf("\n");
+    }
+}
+
+int isSafe(int x,int y,int maze[][N])
+{
+    return (x >= 0 && x < N && y >= 0 && y < N && maze[x][y]); 
+}
+
+int solve(int sol[][N],int x,int y,int maze[][N])
+{
+    //base case 
+    //if it reached destionation
+    if(x == N-1 && y == N-1)
+    {
+        sol[x][y] = 1;
+        return 1;
+    }
+    
+    if(isSafe(x,y,maze))
+    {
+        sol[x][y] = 1;
+        
+        //forward Direction
+        if(solve(sol,x+1,y,maze)) 
+        return 1;
+        
+        //downkward Direction
+        if(solve(sol,x,y+1,maze))
+        return 1;
+        
+        sol[x][y] =0;
+        return 0;
+    }
+    
+    return 0;
+}
+
+void solveMaze()
+{
+     int sol[N][N] = { { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 }, 
+                      { 0, 0, 0, 0 } };
+                      
+    if(!solve(sol,0,0,maze))
+    {
+        printf("No solution exits");
+        return;
+    }
+    
+    printSolution(sol);
+    
+}
+
+int main()
+{
+    int maze[N][N] = { { 1, 0, 0, 0 }, 
+                       { 1, 1, 0, 1 }, 
+                       { 0, 1, 0, 0 }, 
+                       { 1, 1, 1, 1 } }; 
+  
+    solveMaze(maze); 
+
+    return 0;
+}
