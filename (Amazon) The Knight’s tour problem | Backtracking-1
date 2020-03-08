@@ -1,0 +1,88 @@
+#include <stdio.h>
+
+#define SIZE 8
+
+//the maze problem
+
+//matrix to store the solution
+int solution[SIZE][SIZE];
+
+//function to print the solution matrix
+void printsolution()
+{
+    int i,j;
+    for(i=0;i<SIZE;i++)
+    {
+        for(j=0;j<SIZE;j++)
+        {
+            printf("%d\t",solution[i][j]);
+        }
+        printf("\n\n");
+    }
+}
+
+int solvemaze(int r, int c,int n)
+{
+    if(r>=0 && c>=0 && r<SIZE && c<SIZE && solution[r][c] == -1&& n==(SIZE*SIZE)-1) // n == 64
+    {
+        solution[r][c] = n;
+        //correction done at this step..
+        return 1;
+    }
+    if(r>=0 && c>=0 && r<SIZE && c<SIZE && solution[r][c] == -1)
+    {
+        solution[r][c] = n;
+
+
+        if(solvemaze(r+2, c+1,n+1))
+            return 1;
+
+        if(solvemaze(r+1, c+2,n+1))
+            return 1;
+
+        if(solvemaze(r-1, c+2,n+1))
+            return 1;
+
+        if(solvemaze(r-2, c+1,n+1))
+            return 1;
+        if(solvemaze(r-2, c-1,n+1))
+            return 1;
+
+        if(solvemaze(r-1, c-2,n+1))
+            return 1;
+
+        if(solvemaze(r+1, c-2,n+1))
+            return 1;
+
+        if(solvemaze(r+2, c-1,n+1))
+            return 1;
+        solution[r][c]=-1;
+        return 0;
+
+
+
+    }
+
+    return 0;
+
+}
+
+int main()
+{
+
+    int i,j;
+    for(i=0; i<SIZE; i++)
+    {
+        for(j=0; j<SIZE; j++)
+        {
+            solution[i][j] = -1;
+        }
+    }
+        int n=0;
+
+        if (solvemaze(0,0,n))
+            printsolution();
+        else
+            printf("No solution\n");
+    return 0;
+}
