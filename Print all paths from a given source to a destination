@@ -1,0 +1,82 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph
+{
+    int V;
+    list<int>  *adj;
+    public:
+    Graph(int v);
+    void addEdge(int u,int v);
+    void printAllPaths(int s,int d);
+    void util(int s,int d,bool vis[],int path[],int pathIndex);
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+}
+
+void Graph::addEdge(int u,int v)
+{
+    adj[u].push_back(v);
+}
+
+void Graph :: util(int s,int d,bool vis[],int path[],int pathIndex)
+{
+    vis[s] = true;
+    path[pathIndex++] = s;
+    
+    if(s == d)
+    {
+        for(int i = 0 ; i < pathIndex ; i++)
+        cout << path[i] << " ";
+        cout << endl ;
+    }
+    else
+    {
+        list<int> :: iterator it;
+        for(it = adj[s].begin() ; it != adj[s].end() ; it++)
+        {
+            if(!vis[*it])
+            util(*it, d,vis,path,pathIndex);
+        }
+    }
+    
+    pathIndex--;
+    vis[s] = false;
+    
+}
+
+void Graph :: printAllPaths(int s,int d)
+{
+    bool *vis = new bool[V];
+    
+    for(int i= 0 ;i<V;i++)
+    vis[i] = false;
+    
+    int *path = new int[V];
+    int pathIndex = 0;
+    
+    util(s,d,vis,path,pathIndex);
+    
+}
+
+int main()
+{
+   Graph g(4); 
+    g.addEdge(0, 1); 
+    g.addEdge(0, 2); 
+    g.addEdge(0, 3); 
+    g.addEdge(2, 0); 
+    g.addEdge(2, 1); 
+    g.addEdge(1, 3); 
+    int s = 2, d = 3; 
+    cout << "Following are all different paths from " << s 
+        << " to " << d << endl; 
+    g.printAllPaths(s, d); 
+
+    return 0;
+}
