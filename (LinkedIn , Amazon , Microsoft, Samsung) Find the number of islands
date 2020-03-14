@@ -1,0 +1,46 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+#define ROW 5
+#define COL 5
+
+void changeLandToWater(int M[][COL],int i,int j)
+{
+    if( i<0 || i>=ROW || j<0 || j>=COL || M[i][j] == 0)
+    return;
+    
+    M[i][j]=0;
+    changeLandToWater(M,i-1,j) ; //down 
+    changeLandToWater(M,i+1,j) ; //up 
+    changeLandToWater(M,i,j-1) ; //left 
+    changeLandToWater(M,i,j+1) ; //right 
+}
+
+int main()
+{
+
+    int M[][COL] = { { 1, 1, 0, 0, 0 }, 
+                     { 0, 1, 0, 0, 1 }, 
+                     { 1, 0, 0, 1, 1 }, 
+                     { 0, 0, 0, 0, 0 }, 
+                     { 1, 0, 1, 0, 1 } }; 
+                     
+    
+                     
+    int islandCount = 0;      
+   for(int i=0;i<ROW;i++)
+   {
+       for(int j=0;j<COL;j++)
+       {
+           if(M[i][j])
+           {
+               ++islandCount;
+               changeLandToWater(M,i,j);
+           }
+       }
+   }
+   
+   printf("%d",islandCount);
+        
+    return 0;
+}
