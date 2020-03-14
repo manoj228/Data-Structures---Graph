@@ -1,0 +1,136 @@
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Graph{
+    int V;
+    list<int> *adj;
+    int *in;
+    
+    public:
+    Graph(int v);
+    
+    void addEdge(int u,int v) { adj[u].push_back(v) ; in[v]++;   };
+    
+    int iseulerianCycle();
+    
+    void dfs(int v,bool vis[]);
+    
+    int isC();
+    
+    Graph getTranspose();
+};
+
+Graph :: Graph(int v)
+{
+    this -> V = v;
+    adj = new list<int>[V];
+    in = new int[V];
+    for(int i=0;i<V;i++)
+    in[i] = 0;
+}
+
+Graph  Graph:: getTranspose()
+{
+    Graph g(V);
+    
+    list<int> :: iterator it;
+    
+    for(int i=0;i<V;i++)
+    {
+        for(it = adj[i].begin() ; it != adj[i].end() ; it++)
+        g.adj[*it].push_back(i) , (g.in[i])++;
+    }
+    
+    return g;
+}
+
+void Graph :: dfs(int v,bool vis[])
+{
+    vis[v] = true;
+    
+    list<int>::iterator it;
+    for(it = adj[v].begin() ; it != adj[v].end() ; it++)
+    {
+        if(!vis[*it])
+        dfs(*it,vis);
+    }
+}
+
+// This function returns true if all non-zero degree vertices of 
+// graph are strongly connected. 
+int Graph :: isC()
+{
+    bool *vis = new bool[V];
+    
+    for(int i=0;i<V;i++)
+    vis[i] = false;
+    
+    //find the 1st vertex of non zero degree 
+    int i = 0;
+    for(i=0;i<V;i++)
+    {
+        if(adj[i].size() > 0)
+        break;
+    }
+    
+    //do depth first traversal from 1st vertex of non zero degree 
+    dfs(i,vis);
+    
+    //after traversal , if all the vertices are not visited , then return false
+    for(int j=0;j<V;j++)
+    if(adj[j].size() > 0 && !vis[i])
+    return 0;
+    
+    Graph g = getTranspose();
+    
+    for(int i=0;i<V;i++)
+    vis[i] = false;
+    
+    g.dfs(i,vis);
+    
+    for(int j=0;j<V;j++)
+    if(adj[j].size() > 0 && !vis[i])
+    return 0;
+    
+    
+    return 1;
+    
+}
+
+int Graph :: iseulerianCycle()
+{
+    //check all the non zero degree vertices are connected
+    if(!isC())
+    return 0;
+    
+    //check all indegree and outdegree of vertices are same
+    for(int i=0;i<V;i++)
+    if(adj[i].size() != in[i])
+    return 0;
+    
+    return 1;
+}
+
+int canBeChained(string a[],int n)
+{
+   Graph g(26);
+   
+   for(int i=0;i<n;i++)
+   {
+       string s = a[i];
+       g.addEdge(s[0] - 'a' , s[s.length()-1] - 'a');
+   }
+   
+   return g.iseulerianCycle();
+}
+
+int main()
+{
+    string arr1[] =  {"for", "geek", "rig", "kaf"}; 
+    int n1 = sizeof(arr1)/sizeof(arr1[0]); 
+    canBeChained(arr1, n1)?  cout << "Can be chained \n" : 
+                           cout << "Can't be chained \n"; 
+  
+    return 0;
+}
