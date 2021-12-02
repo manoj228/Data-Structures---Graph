@@ -1,0 +1,88 @@
+// Time complexity : O(V*V)
+// Space complexity : O(V*V)
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct adjListnode
+{
+	int data;
+	struct adjListnode *next;
+};
+
+struct adjList
+{
+	struct adjListnode *head;
+};
+
+struct Graph
+{
+	int V;
+	struct adjList *list;
+};
+
+struct Graph *createGraph(int v)
+{
+	struct Graph *g = (struct Graph *) malloc(sizeof(struct Graph));
+	g -> V = v;
+	g -> list = (struct adjList *) malloc(sizeof(struct adjList));
+	
+	// make all heads as null
+	for(int i = 0; i < v; i++)
+	{
+		g -> list[i].head = NULL;
+	}
+	
+	return g;
+}
+
+struct adjListnode *createNode(int val)
+{
+	struct adjListnode *newNode = (struct adjListnode *)malloc(sizeof(struct adjListnode));
+	newNode -> data = val;
+	newNode -> next = NULL;
+	
+	return newNode;
+}
+
+void addEdge(struct Graph *g, int u, int v)
+{
+	struct adjListnode *newNode = createNode(v);
+	newNode -> next = g -> list[u].head;
+	g -> list[u].head = newNode;
+	
+	newNode = createNode(u);
+	newNode -> next = g -> list[v].head;
+	g -> list[v].head = newNode;
+	
+}
+
+void print(struct Graph* g)
+{
+	for(int i = 0; i < g -> V; i++)
+	{
+		struct adjListnode *newNode = g -> list[i].head;
+		printf("%d -> ", i);
+		while(newNode)
+		{
+			printf("%d ", newNode->data);
+			newNode = newNode -> next;
+		}
+		printf("\n");
+	}
+}
+
+int main(void) {
+	// your code goes here
+	
+	struct Graph *g = createGraph(3);
+	
+	addEdge(g, 0, 1);
+	addEdge(g, 0, 2);
+	addEdge(g, 1, 2);
+	
+	
+	print(g);
+	
+	return 0;
+}
